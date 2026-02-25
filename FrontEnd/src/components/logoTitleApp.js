@@ -7,9 +7,9 @@ export default function Logo(){
         <View>
             <View style={styles.container}>
             <View style={styles.trophy}>
-                <Octicons name="trophy" size={24} color="#fff" />
+                <Octicons name="trophy" size={25} color="#fff" />
             </View>           
-                <Text style={{alignContent:'center', marginLeft:8,fontSize:20,color:'#1A3D8F'}}>
+                <Text style={{alignContent:'center', marginLeft:8,fontSize:25,color:'#1A3D8F',fontWeight:'500'}}>
                     HabitQuest
                 </Text>                     
             
@@ -20,8 +20,7 @@ export default function Logo(){
 }
 
 const styles = StyleSheet.create({
-    container:{
-    
+    container:{    
         flexDirection:'row',
         
     },
