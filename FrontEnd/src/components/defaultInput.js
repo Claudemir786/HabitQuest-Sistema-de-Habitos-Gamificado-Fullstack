@@ -21,12 +21,14 @@ export default function Input({name='default',placeholder,value,setValue,secureT
 
 const styles = StyleSheet.create({
     container:{
-        flex:1,        
+        flex:1,  
+        marginBottom:20      
     },
     text:{
-        fontSize:23,
+        fontSize:20,
         color:'#1A3A52',
-        marginLeft:65
+        marginLeft:30,
+        fontWeight:'500'
     },
     input:{
         borderWidth:1,

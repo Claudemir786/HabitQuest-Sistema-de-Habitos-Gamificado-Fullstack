@@ -4,7 +4,7 @@ import DefaultButton from '../components/defaultButton'
 import Feather from '@expo/vector-icons/Feather';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-export default function Index(){
+export default function Index({navigation}){
 
     return(
         <View style={styles.container}>
@@ -13,13 +13,13 @@ export default function Index(){
            <View style={styles.header}>
                 <Logo/>
                 <View style={styles.button} >
-                    <TouchableOpacity >
+                    <TouchableOpacity onPress={()=>navigation.navigate('login')}>
                     <Text style={styles.textbutton}>Login</Text>
                 </TouchableOpacity>
                 </View>
                
                 <View style={[styles.button, {backgroundColor:'#4A90E2'}]}>
-                    <TouchableOpacity >
+                    <TouchableOpacity onPress={()=>navigation.navigate('register')} >
                     <Text style={[styles.textbutton, {color:"#fff"}]}>Cadastrar</Text>
                 </TouchableOpacity>
                 </View>
@@ -41,9 +41,9 @@ export default function Index(){
                             Construa hábitos positivos de forma divertida com gamificação.Ganhe pontos,suba de nível e conquiste suas metas diárias</Text>
                     </View>
                     {/*botão um */}
-                    <DefaultButton name='Começar Agora'/>
+                    <DefaultButton name='Começar Agora' handle={()=>navigation.navigate('register')}/>
                     {/*botão dois */}
-                    <DefaultButton name='Já tenho conta' color='#F0F8FF' colorText='#4A90E2'/>                 
+                    <DefaultButton name='Já tenho conta' color='#F0F8FF' colorText='#4A90E2' handle={()=>navigation.navigate('login')}/>                 
 
                 </View>
 

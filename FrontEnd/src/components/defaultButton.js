@@ -6,7 +6,7 @@ export default function DefaultButton({name='default',handle,color='#4A90E2',col
         <View style={styles.container}>
             <TouchableOpacity
                 style={[styles.button, {backgroundColor:color, borderColor:magincolor}]}
-                onPress={()=>handle}
+                onPress={handle}
             >
                 <Text style={[styles.text, {color:colorText}]}>{name}</Text>
             </TouchableOpacity>
