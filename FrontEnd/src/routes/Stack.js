@@ -18,6 +18,7 @@ export default function Stack(){
             <STACK.Screen name="login" component={Login} />
             <STACK.Screen name="register" component={Register}/>
             <STACK.Screen name="drawer" component={Drawer}/>
+                 
 
         </STACK.Navigator>
 

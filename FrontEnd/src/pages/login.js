@@ -7,6 +7,10 @@ import Footer from '../components/footer'
 
 export default function Login({navigation}){
 
+        function handleLogin(){
+            navigation.navigate("drawer")
+        }
+
     return(
         <ScrollView style={styles.container}>
             {/*Cabeçalho */}
@@ -44,7 +48,7 @@ export default function Login({navigation}){
                    </TouchableOpacity>
                 </View>
 
-                <DefaultButton name='Entrar'/>
+                <DefaultButton name='Entrar' handle={()=> handleLogin()}/>
 
                 <View style={{flexDirection:'row', justifyContent:'center', marginTop:30, marginBottom:30}}>
                     <Text style={{fontSize:20, color:'#5B7C99'}}>Não tem uma conta?</Text>
