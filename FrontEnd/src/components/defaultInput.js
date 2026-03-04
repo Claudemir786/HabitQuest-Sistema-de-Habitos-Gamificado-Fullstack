@@ -1,6 +1,6 @@
 import{View,Text,StyleSheet,TextInput} from "react-native"
 
-export default function Input({name='default',placeholder,value,setValue,secureText}){
+export default function Input({name='default',placeholder,value,setValue,secureText, paddingInput}){
 
     return(
         <View style={styles.container}>
@@ -11,7 +11,7 @@ export default function Input({name='default',placeholder,value,setValue,secureT
                 value={value}
                 onChangeText={setValue}
                 secureTextEntry={secureText}
-                style={styles.input}
+                style={[styles.input, {padding:paddingInput}]}
                 />
             </View>
         </View>

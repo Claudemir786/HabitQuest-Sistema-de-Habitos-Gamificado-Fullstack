@@ -12,15 +12,13 @@ const arrayHabits = [
 
 ]
 
-
-
-
 export default function Home({navigation}){
 
     const[status, setStatus] = useState(false);
     const[numHabits,setNunHabits] = useState(false);
     const[completedHabits, setCompletedHabits] = useState(false)
-    const[habits,setHabits] = useState(false) 
+    const[habits,setHabits] = useState(false) //usado caso os dados da api não retornem ou o usuário seja novo e não tenha nada ainda
+   
 
     useEffect(()=>{
         setStatus(true) //só pra mostrar as infomações
@@ -30,16 +28,57 @@ export default function Home({navigation}){
 
     },[])
 
+
+
     const LIST = ({habit})=>{
+
+    const[buttonClick,serButtonClick] = useState(false)//usado quando clicado no botão
+
+    //função que marca a opção de hábito e recebe o habito e o xp ganhado
+     function completedHabit(habitNameXp){
+       serButtonClick(true);
+        console.log("o que veio de resposta: ", habitNameXp);
+    }
+
     return(
         <View>
-              <TouchableOpacity style={styles.button}>
-                        <Text style={{color:'#163751', fontSize:20}}>{habit?.name}</Text>
-                        <Text style={{color:'#163751', fontSize:20, marginBottom:5}}>+{habit?.xp} Xp</Text>
-                </TouchableOpacity>
+            {!buttonClick  &&(
+                <TouchableOpacity
+                style={styles.button}
+                onPress={()=> completedHabit(habit)}
+            >
+                    <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name}</Text>
+                    <Text style={{color:'#a2a4a7', fontSize:20, marginBottom:5}}>+{habit?.xp} Xp</Text>
+            </TouchableOpacity>
+            )}
+            {buttonClick &&(
+                <View >
+                 
+                        <TouchableOpacity
+                            style={[styles.button, {backgroundColor:'#E2F1FB', flexDirection:'row', justifyContent:'space-between'}]}>
+                          
+                            
+                            <View style={{flexDirection:'column'}}>
+                                <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name}</Text>
+                                <Text style={{color:'#163751', fontSize:20, marginBottom:5}}>+{habit?.xp} Xp</Text>
+                            </View>
+                            <View style={styles.buttonCompleted}>
+                                <Text style={{fontSize:20,color:'#4A90E2'}}>Concluído!</Text>
+                            </View>
+                            
+
+                        </TouchableOpacity>
+                    </View>
+                
+            )}
+            
+         
         </View>
     )
-}
+    }
+
+   
+
 
     return(
         <ScrollView style={styles.container}>
@@ -52,7 +91,10 @@ export default function Home({navigation}){
 
                 {/* se os dados de hábitos a serem concluídos estiverem presentes*/}
                 {status === true &&(
-                    <Text style={{fontSize:20, color:'#ffffffa4', marginTop:5, textAlign:'center'}}>{numHabits} de {completedHabits} hábitos concluídos</Text>
+                    <Text style={{fontSize:20, color:'#ffffffa4', marginTop:5, textAlign:'center'}}>
+
+                        {completedHabits} de {numHabits}  hábitos concluídos 
+                    </Text>
                 )}
 
             </View>
@@ -82,7 +124,10 @@ export default function Home({navigation}){
 
             {/*Adiciona novo hábito */}
             <View>
-                <DefaultButton name="+ Adicionar Novo Hábito"/>
+                <DefaultButton 
+                name="+ Adicionar Novo Hábito"
+                handle={()=> navigation.navigate("addHabit")}
+                />
             </View>
         </ScrollView>
     )
@@ -116,8 +161,16 @@ const styles = StyleSheet.create({
         padding:10,
         marginTop:15,
         borderWidth:1,
-        borderColor:'#817f7f',
+        borderColor:'#c4e2fc',
         marginBottom:10
+    },
+    buttonCompleted:{
+        justifyContent:'center',
+        backgroundColor:'#D2E6F8',
+        borderRadius:15,
+        padding:8
+        
+    
     }
 
 })
