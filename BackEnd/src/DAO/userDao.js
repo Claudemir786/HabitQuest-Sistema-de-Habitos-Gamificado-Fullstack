@@ -53,14 +53,14 @@ export async function changeEmailU(email,newEmail){
 
     //query feita para buscar primeiramente o id do usuário
     const [row] =  await pools.query(`SELECT * from users WHERE email = ?`, [email]);
-    if(!row.affectedRows === 0)throw new Error("Falha ao encontrar email");// se a query falhar
+    if(row.length === 0)throw new Error("Falha ao encontrar email");// se a query falhar
     const userId = row[0].id;//guarda o id de usuário
     //console.log("userId: ", userId);//teste para verificar se o id foi capturado
     if(!userId)throw new Error("o id do usuário não foi encontrado");
 
 
     const [rows] = await pools.query(`UPDATE users SET email = ? WHERE id=?`, [newEmail,userId]);
-    if(!rows.affectedRows === 0)throw new Error("Falha ao fazer update no banco de dados");
+    if(rows.affectedRows === 0)throw new Error("Falha ao fazer update no banco de dados");
     return true;
 
     
@@ -70,15 +70,48 @@ export async function changeEmailU(email,newEmail){
    }
 }
 
-export async function chagePasswordU(id,password) {
-    
+export async function changePasswordU(email,password) {
+    try {
+        //criptografa a senha
+        const passwordCrypt = await hashPassword(password);
+
+        const [rows] = await pools.query(`UPDATE users SET password = ? WHERE email = ?`, [passwordCrypt,email]);
+        if(rows.affectedRows === 0)throw new Error("update no banco falhou");
+        return true;
+
+        
+    } catch (error) {
+        console.log("erro ao alterar senha de usuário: ", error.message);
+        return false;
+    }
 }
 
-export async function getUser(id){
+export async function readtUser(id){
+
+    try {
+
+        const [row] = await pools.query(`SELECT name_user, level, email FROM users WHERE id = ?`, [id]);
+        if(row.length === 0 )throw new Error("query não foi concluida");
+        return row[0];
+
+        
+    } catch (error) {
+        console.log("usuário não encontrado: ", error.message);
+        return false;
+    }
 
 }
 
-export async function deleteUser(id){
-    
+export async function deleteU(id){
+    try {
+        
+        const [result] = await pools.query(`DELETE FROM users WHERE id = ?`,[id]);
+        if(result.affectedRows === 0)throw new Error("falha ao deletar, query não foi concluída");
+        return true;
+
+    } catch (error) {
+        console.log("usuário não foi excluido corretamente: ", error.message);
+        return false;
+    }
 }
 

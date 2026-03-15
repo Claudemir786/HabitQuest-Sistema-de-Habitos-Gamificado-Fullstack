@@ -25,6 +25,9 @@ route.get("/user", user.getUser);
 route.delete("/userDelete", user.deleteUser);
 
 //rotas de habit
+route.post("/create/habit", habit.create);
+route.post("/completed/habit", habit.completed);
+route.get("/read/habit", habit.getHabit);
 
 
 //rotas de statistic
