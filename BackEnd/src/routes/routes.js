@@ -30,6 +30,7 @@ route.post("/completed/habit", habit.completed);
 route.get("/read/habit", habit.getHabit);
 
 
+
 //rotas de statistic
 
 

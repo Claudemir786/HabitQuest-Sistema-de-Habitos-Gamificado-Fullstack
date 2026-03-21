@@ -2,7 +2,8 @@
 //criação de um novo habito (feito)
 //buscar todos os habitos já cadastrados e quantidade
 
-import { completedH, createH, readH } from "../DAO/habitDao.js";
+import { checkAchievements } from "../DAO/achievement.js";
+import { createH, readH,completedH } from "../DAO/habitDao.js";
 import { message } from "../utils/messageError.js";
 
 export class Habit{
@@ -53,7 +54,7 @@ export class Habit{
 
             const result = await completedH(habit_id,user_id,date,xp_earned);
             if(!result)return message(res,"não foi possivel criar habit log");
-
+           
             return res.status(201).json({success:true, message:"habito completado com sucesso"});
 
             

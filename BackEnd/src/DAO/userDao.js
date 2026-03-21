@@ -90,7 +90,7 @@ export async function readtUser(id){
 
     try {
 
-        const [row] = await pools.query(`SELECT name_user, level, email FROM users WHERE id = ?`, [id]);
+        const [row] = await pools.query(`SELECT name_user, level,xp,current_streak, email FROM users WHERE id = ?`, [id]);
         if(row.length === 0 )throw new Error("query não foi concluida");
         return row[0];
 
