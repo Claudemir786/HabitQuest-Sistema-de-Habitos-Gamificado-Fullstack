@@ -54,6 +54,7 @@ export class Habit{
 
             const result = await completedH(habit_id,user_id,date,xp_earned);
             if(!result)return message(res,"não foi possivel criar habit log");
+            
            
             return res.status(201).json({success:true, message:"habito completado com sucesso"});
 

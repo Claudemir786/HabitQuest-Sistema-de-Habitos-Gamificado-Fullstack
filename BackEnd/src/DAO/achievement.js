@@ -1,4 +1,5 @@
 import pool from "./database.js";
+import { readH } from "./habitDao.js";
 import { readtUser } from "./userDao.js";
 
 const pools = pool;
@@ -9,31 +10,59 @@ export async function checkAchievements(id_user) {
     try {
        const user = await readtUser(id_user);//busca o usuário
        const achievements = await getAchievements(id_user);//busca todas as conquistas
+       const countHabits = await readH(id_user);  
+
+       if(!achievements || achievements.length === 0 )return false;
+
        
-       if(!achievements)return false;
-        
 
         //verifica as o xp e a streak antes de acessar o banco 
         for(let achievement of achievements){
-
+           
             let unlocked = false;
+            
+           
+            //xp primeira vez que competa um habito e primeira conquista
+            if(achievement.title === "Primeira Vitória" && user.xp >= 10){
+                unlocked = true;
 
-            //xp
-            if(user.xp && achievement.xp_required >= achievement.xp_required){
-                unlocked  = true;
+            } 
+            //conquista de xp
+            if(user.xp >= 2000 && achievement.xp_required === 2000){
+                unlocked = true;             
+            }
+            //conquista de xp
+            if(user.xp >= 5000 && achievement.xp_required === 5000){
+               unlocked = true;                
+            }        
+   
+            //streak dias
+            if(user.current_streak >= achievement.streak_required && achievement.xp_required === null 
+                && achievement.title != "Pegando o gosto")
+                {
+
+                unlocked=true; 
+
+                }
+            
+            if(achievement.title === "Pegando o gosto"){
+                       //veirifica a conquista "Pegando o gosto"
+                if(countHabits.length >= 5){  
+                                   
+                    unlocked = true;
+                }
+                
             }
 
-            //streak
-            if(user.current_streak && achievement.streak_required >= achievement.streak_required){
-                unlocked=true;
-            }
-
-            //se desbloqueou
-            if(unlocked){
+            //se desbloqueou            
+            if(unlocked){                 
                const result = await unlockedAchievement(id_user,achievement.id);
                if(!result)return false;
+              
+                
                
-            }         
+            }       
+             
         }
         
     } catch (error) {
@@ -53,8 +82,8 @@ export async function getAchievements(id) {
                                             WHERE ua.user_id = ?
                                             AND ua.achievement_id = a.id)`,[id]);
 
-        if(!rows.length === 0 )throw new Error("Falha: o banco não encontrou os dados da tabela");
-        
+        if(rows.length === 0 )throw new Error("Falha: o banco não encontrou os dados da tabela");
+       
         return rows;
         
     }catch(error){
@@ -68,7 +97,7 @@ export async function unlockedAchievement(id_user, achievement_id){
 
     try {
 
-        const [result] = await pools.query(`INSERT INTO user_achievement (user_id, achievement_id)VALUE(
+        const [result] = await pools.query(`INSERT INTO user_achievement (user_id, achievement_id)VALUES(
                                             ?,?)`, [id_user, achievement_id]);
 
         if(result.affectedRows === 0 )throw new Error("Falha ao criar conquista de usuário no banco de dados");

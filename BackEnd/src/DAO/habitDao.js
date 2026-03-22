@@ -50,18 +50,21 @@ export async function completedH(habit_id,user_id,date,xp_earned){
         if(result.affectedRows === 0)throw new Error("Não foi possivel criar habit_log no banco de dados");
 
         const sumXpUser = await sumXp(user_id);
+        
         if(sumXpUser){
-           const streak = await streak(user_id);
-           
-           if(streak){
+            
+           const st = await streak(user_id);
+          
+           if(st){
                 await checkAchievements(user_id);
+                await levelup(xp_earned,user_id);
            }
             
         }
         return true;
         
     } catch (error) {
-        console.log("Erro, não foi possível criar habit_log: ", error.message);
+        console.log("Erro, não foi possível criar habit_log: ", error);
         return false;
     }
 }
@@ -138,7 +141,11 @@ async function streak(id_user) {
 
         user.last_completed_date = today;
 
+        
+
         const update = await updateStreak(user.current_streak,user.longest_streak,user.last_completed_date,id_user);
+        if(!update)return false;
+        return true;
 
 
     } catch (error) {
@@ -151,10 +158,10 @@ async function streak(id_user) {
 
 async function updateStreak(current,longest,last,id){
     try {
-    
+      
         const [result] = await pools.query(`UPDATE users SET current_streak = ?, 
                                             longest_streak = ?, 
-                                            last_completed_date = ?,
+                                            last_completed_date = ?
                                             WHERE id = ?`, [current,longest,last,id]);
 
         if(result.affectedRows === 0)throw new Error("Falha no banco ao fazer o update de streak");
@@ -162,13 +169,49 @@ async function updateStreak(current,longest,last,id){
         return true;
         
     } catch (error) {
-        console.log("Falha ao fazer update de streak: ", error.message);
+        console.log("Falha ao fazer update de streak: ", error);
         return false;
     }
 
 }
 
-async function levelup(xp){
+async function levelup(xp,id){
     //recebe o xp e sobe o nivel do usuário 
     //criar regras de nivel e aumentar caso necessário
+    try {
+
+        //busca o usuário
+        const user = await readtUser(id);
+
+        const sumXp = xp + user.xp;
+
+        const level = arrayLevel;
+        
+        
+    } catch (error) {
+        console.log("falha ao fazer simatória dos niveís: ", error.message);
+    }
+
+
+}
+
+function arrayLevel(){
+
+    const user = [];
+    
+
+    for (let index = 0; index <25; index++){     
+       
+        let userObj = {"level":index, "xp":0};        
+       
+        userObj.level +=1;
+        userObj.xp = userObj.level * 200;
+
+        user.push(userObj);
+        
+    }
+
+    return user;
+
+    
 }
