@@ -115,3 +115,20 @@ export async function deleteU(id){
     }
 }
 
+export async function updateXpLevel(xp,level,id){
+    try{
+        if(!id || xp<0 || level <1){
+            throw new Error("Dados inválidos para atualização");
+        }
+
+        const [result] = await pools.query(`UPDATE users SET level = ?, xp = ? WHERE id = ? `,[level,xp,id]);
+
+        if(result.affectedRows === 0)throw new Error("Falha ao setar novo xp e level no banco de dados");
+
+        return true;
+
+    }catch(error){        
+        console.log("Erro ao atualizar o usuário ", {id,level,xp,error:error.message});
+        return false;
+    }
+}

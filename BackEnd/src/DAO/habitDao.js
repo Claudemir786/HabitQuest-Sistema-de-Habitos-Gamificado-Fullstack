@@ -4,7 +4,7 @@
 
 import { checkAchievements } from "./achievement.js";
 import pool from "./database.js";
-import { readtUser } from "./userDao.js";
+import { readtUser, updateXpLevel } from "./userDao.js";
 
 const pools = pool;
 
@@ -58,6 +58,7 @@ export async function completedH(habit_id,user_id,date,xp_earned){
            if(st){
                 await checkAchievements(user_id);
                 await levelup(xp_earned,user_id);
+            
            }
             
         }
@@ -184,21 +185,28 @@ async function levelup(xp,id){
         const user = await readtUser(id);
 
         const sumXp = xp + user.xp;
+        const level = generateLevelTable();
 
-        const level = arrayLevel;
-        
+        let userLevel = 1;
+
+        for(let lvl of level){
+            
+            if(sumXp >= lvl.xp){
+                 userLevel = lvl.level;  
+                                           
+            }
+        }        
+        return await updateXpLevel(sumXp,userLevel,id);
         
     } catch (error) {
-        console.log("falha ao fazer simatória dos niveís: ", error.message);
+        console.log("falha ao fazer somatória dos niveís: ", error.message);
     }
-
 
 }
 
-function arrayLevel(){
+function generateLevelTable(){
 
-    const user = [];
-    
+    const user = [];    
 
     for (let index = 0; index <25; index++){     
        

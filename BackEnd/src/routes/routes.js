@@ -32,6 +32,7 @@ route.get("/read/habit", habit.getHabit);
 
 
 //rotas de statistic
+route.get("/statistic/monthly", statistic.getMonthlyProgress);
 
 
 
