@@ -1,7 +1,7 @@
 //buscar dados de a quantidade de habitos concluidos,xp total,taxa de sucesso em porcentagem e quantas conquistas desbloqueadas
 //buscar quais conquistas foram desbloqueadas que vãoser mostardas na tela 
 
-import { monthlyProgress } from "../DAO/statistcsDao.js";
+import { monthlyProgress, userStatistics } from "../DAO/statistcsDao.js";
 import { message } from "../utils/messageError.js";
 
 export class Statistic{
@@ -19,6 +19,21 @@ export class Statistic{
             console.log("Falha ao buscar dados do mês atual: ", error.message);
             return message(res,"não foi possivel encontrar dados do mês atual");
 
+        }
+    }
+
+    async userStatistics(req,res){
+        try {
+            const {id} = req.body;
+            const result = await userStatistics(id);
+
+            if(!result)return message(res,"falha na busca dos dados");
+
+            return res.status(200).json({success:true, data:result[0], achievements:result[1]});
+            
+        } catch (error) {
+            console.log("não foi possivel buscar dados: ", error.message);
+            return message(res,"falha ao buscar dados do usuário");
         }
     }
 }

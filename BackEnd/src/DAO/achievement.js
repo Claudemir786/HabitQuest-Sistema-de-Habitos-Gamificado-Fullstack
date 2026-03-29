@@ -111,3 +111,37 @@ export async function unlockedAchievement(id_user, achievement_id){
     }
 
 } 
+
+
+ export async function userAchievements(id){
+    try {
+        
+        const [row] = await pools.query(`
+            SELECT 
+            a.title, 
+            a.description, 
+            a.badge_icon,
+            a.xp_required,
+            a.streak_required,           
+            IF(ua.id IS NULL, false, true) AS is_unlocked,
+            ua.unlocked_at
+            FROM Achievement AS a
+            LEFT JOIN User_achievement AS ua 
+                ON a.id = ua.achievement_id 
+                AND ua.user_id = ?
+            ORDER BY a.xp_required ASC;
+            `, [id]);
+
+        if(row.length === 0)throw new Error("Falha ao buscar dados no banco de dados, dados não retornaram corretamente")
+           
+         return row;   
+
+        
+    } catch (error) {
+        console.log("falha ao buscar todos os achievements: ", error);
+        return false;
+    }
+    
+}
+
+

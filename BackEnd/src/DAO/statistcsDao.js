@@ -1,6 +1,7 @@
 //buscar dados de a quantidade de habitos concluidos,xp total,taxa de sucesso em porcentagem e quantas conquistas desbloqueadas
 //buscar quais conquistas foram desbloqueadas que vãoser mostardas na tela 
 
+import { userAchievements } from "./achievement.js";
 import pool from "./database.js";
 
 const pools = pool;
@@ -15,14 +16,17 @@ export async function monthlyProgress(id) {
 
 
         const [row] = await pools.query( `
-            SELECT SUM(xp_earned) as total_xp 
+            SELECT 
+            (SELECT current_streak FROM users WHERE id = ?) as current_streak,
+            SUM(xp_earned) as total_xp
             FROM Habit_logs 
             WHERE user_id = ? AND completed_at >= ?
-        `,[id,thirtyDaysAgo]);
+            `,[id,id,thirtyDaysAgo]);
 
         if(row.length === 0)throw new Error("Erro ao fazer soma de xp de 30 dias atrás");
 
         const totalXp = row[0].total_xp;
+        const current_streak = row[0].current_streak;
 
         //calcula dados da streak
         const [rows] = await pools.query(`
@@ -38,7 +42,12 @@ export async function monthlyProgress(id) {
 
         const streaks = getStreakStats(logDates);
     
-         const result = {totalXp: totalXp, longest: streaks.longestStreak, totalDays:streaks.totalDaysActive }   
+         const result = {
+            totalXp: totalXp, 
+            longest: streaks.longestStreak, 
+            totalDays:streaks.totalDaysActive,
+            current_streak:current_streak
+        }   
         return result;
         
     } catch (error) {
@@ -78,6 +87,37 @@ function getStreakStats(dates) {
         longestStreak: longest,
         totalDaysActive: dates.length // Quantos dias ele cumpriu hábitos no mês
     };
+}
+
+export async function userStatistics(id) {
+    try {
+
+        const [row] = await pools.query(`
+            SELECT 
+            u.xp as total_xp,              
+            u.current_streak,                
+            (SELECT COUNT(*) 
+            FROM Habit_logs 
+            WHERE user_id = u.id) as habits_count,
+            (SELECT COUNT(*) 
+            FROM User_achievement 
+            WHERE user_id = u.id) as achievements_count 
+            FROM Users u
+            WHERE u.id = ?;
+            `,[id]);
+
+         if(row.length === 0)throw new Error("a query não foi completada com sucesso no momento de buscar os dados");
+
+            const achievements = await userAchievements(id);
+            if(!achievements)throw new Error("os achievements não foram encontrados");
+         
+         return [row[0],achievements];
+        
+    } catch (error) {
+        console.log("falha ao buscar dados estatisticos do usuário: ", error.message);
+        return false;
+    }
+    
 }
 
 
