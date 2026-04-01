@@ -85,11 +85,8 @@ export class User{
 
     //trás os dados do usuario, nome,email e nivel
     async getUser(req,res){
-        try{
-
-            const{id} = req.body;
-            if(!id)return message(res,"dados enviado incorretamente");
-
+        try{         
+            const id = req.user.id;            
             const result = await readtUser(id);
             if(!result)return message(res,"falha ao buscar dados do usuário");
 

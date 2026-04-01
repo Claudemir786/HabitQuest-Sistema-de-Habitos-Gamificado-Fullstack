@@ -3,6 +3,7 @@
 //para a página de perfil => puxar o nome email e nivel para mostrar na tela depois 
 
 import { comparePassword, hashPassword } from "../utils/hashPassword.js";
+import { createToken } from "../utils/tokenJwt.js";
 import pool from "./database.js";
 
 const pools = pool;
@@ -38,8 +39,10 @@ export async function loginU(email,password){
         
         //verifica se a senha é a mesma senha que está no banco
         const verifyPassword = await comparePassword(password,user.password);        
-        if(!verifyPassword)throw new Error("A senha do usuário está incorreta");       
-        return user.id; 
+        if(!verifyPassword)throw new Error("A senha do usuário está incorreta"); 
+        const token = createToken(user);      
+        //return user.id; 
+        return token;
 
         
     } catch (error) {

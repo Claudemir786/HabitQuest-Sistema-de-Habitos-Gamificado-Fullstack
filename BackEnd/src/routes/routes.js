@@ -2,6 +2,7 @@ import { Router } from "express";
 import { User } from "../controller/userController.js";
 import { Habit } from "../controller/habitController.js";
 import { Statistic } from "../controller/statisticController.js";
+import { Auth } from "../middleware/auth.js";
 
 const route = Router();
 
@@ -21,7 +22,7 @@ route.post("/create",user.create);
 route.post("/login", user.login);
 route.put("/changeEmail", user.chageEmail);
 route.put("/changePass", user.changePassword);
-route.get("/user", user.getUser);
+route.get("/user", Auth, user.getUser);
 route.delete("/userDelete", user.deleteUser);
 
 //rotas de habit
