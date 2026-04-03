@@ -129,6 +129,9 @@ export default function Home({navigation}){
                 handle={()=> navigation.navigate("addHabit")}
                 />
             </View>
+            <View style={{marginTop:70}}>
+
+            </View>
         </ScrollView>
     )
 }

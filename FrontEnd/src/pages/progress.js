@@ -118,7 +118,8 @@ const styles = StyleSheet.create({
         borderRadius:10,
         alignSelf:'center',
         marginTop:50,
-        padding:20
+        padding:20,
+        marginBottom:70
     },
     titleResumeCard:{
         color:'#fff',
