@@ -3,9 +3,45 @@ import Logo from '../components/logoTitleApp'
 import Input from '../components/defaultInput'
 import DefaultButton from '../components/defaultButton'
 import Footer from '../components/footer'
+import { useState } from 'react'
+import { createU } from '../services/UserService'
 
 
 export default function Register({navigation}){
+
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirm, setPasswordConfirm] = useState("");
+    const [failureLogin, setFailureLogin] = useState(false);
+
+
+    async function handleCreate(){
+        try {
+           
+            if(!name || !email || !password || !passwordConfirm){                
+                setFailureLogin(true);
+
+            }else if(name <2 || !email.includes("@") || email < 9 
+            || password < 6 || password !== passwordConfirm){
+                
+                setFailureLogin(true);
+            }else{
+               
+                const result = await createU(name,email,password);
+
+                if(result){
+                    alert("Conta criada com sucesso");
+                    navigation.navigate('login')
+                }
+                setFailureLogin(true);
+            }
+
+        } catch (error) {
+            console.error("falha ao criar usuário");
+        }
+    }
+    
 
     return(
         <ScrollView style={styles.container}>
@@ -33,20 +69,28 @@ export default function Register({navigation}){
             <View>
                
                 <Input 
-                name='Nome completo' placeholder='João Silva' />                                              
+                name='Nome completo' placeholder='João Silva' 
+                value={name} setValue={setName} />                                              
                 <Input 
-                name='Email' placeholder={'seu@email.com'}/>
+                name='Email' placeholder={'seu@email.com'} 
+                value={email} setValue={setEmail}/>
                 <Input 
-                name='Senha' placeholder={"******"} secureText={true}/>               
+                name='Senha' placeholder={"******"} secureText={true} 
+                value={password} setValue={setPassword}/>               
                 <Input 
-                name='Confirmar senha' placeholder={"******"} secureText={true}/>                               
+                name='Confirmar senha' placeholder={"******"} secureText={true} 
+                value={passwordConfirm} setValue={setPasswordConfirm}/>                               
                
             </View>
+                {failureLogin &&(
+                     <Text style={{color:'red', fontSize:20, textAlign:'center',fontWeight:'500'}}
+                    >Falha ao criar conta, verifique se os campos foram digitados corretamente</Text>
+                )}
 
             {/*Botão*/}
             <View>               
 
-                <DefaultButton name='Criar conta'/>
+                <DefaultButton name='Criar conta' handle={handleCreate}/>
 
                 <View style={styles.log}>
                     <Text style={{fontSize:20, color:'#5B7C99'}}>Já tem uma conta?  </Text>

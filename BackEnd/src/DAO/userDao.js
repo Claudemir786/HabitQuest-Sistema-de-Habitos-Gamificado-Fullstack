@@ -40,6 +40,7 @@ export async function loginU(email,password){
         //verifica se a senha é a mesma senha que está no banco
         const verifyPassword = await comparePassword(password,user.password);        
         if(!verifyPassword)throw new Error("A senha do usuário está incorreta"); 
+        
         const token = createToken(user);      
         //return user.id; 
         return token;

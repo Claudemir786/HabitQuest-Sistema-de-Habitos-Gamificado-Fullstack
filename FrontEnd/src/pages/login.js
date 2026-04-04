@@ -3,12 +3,40 @@ import Logo from '../components/logoTitleApp'
 import Input from '../components/defaultInput'
 import DefaultButton from '../components/defaultButton'
 import Footer from '../components/footer'
+import { useState } from 'react'
+import { loginU } from '../services/UserService'
 
 
 export default function Login({navigation}){
 
-        function handleLogin(){
-            navigation.navigate("drawer")
+    const [email,setEmail] = useState("");
+    const [password,setPassword] = useState("");
+    const [loginFailure, setLoginfailure] = useState(false);
+    
+
+    
+
+        async function handleLogin(){
+           try {
+                if(!password ||  password.length < 6 || !email || email.length < 9 || !email.includes("@")){
+                   setLoginfailure(true);
+
+                }else{
+                   
+                    const result = await loginU(email,password);
+                    if(result){                        
+                        navigation.navigate("drawer")
+                    }
+                    setLoginfailure(true);
+                }
+
+            
+           } catch (error) {            
+            console.error("falha ao fazer o login", error.message);
+           }     
+           
+           
+           
         }
 
     return(
@@ -34,10 +62,24 @@ export default function Login({navigation}){
             {/*inputs*/}
             <View style={{marginBottom:20}}>
                
-                <Input name='Email' placeholder='seu@email.com' />                         
-                <Input name='Senha' placeholder={'*******'} secureText={true}/>                              
+                <Input 
+                name='Email' 
+                placeholder='seu@email.com' 
+                value={email} setValue={setEmail}/>                         
+                <Input 
+                name='Senha' 
+                placeholder={'*******'} 
+                secureText={true} 
+                value={password} setValue={setPassword}/>               
+                                        
             </View>
-
+            {loginFailure &&(
+                
+                    <Text style={{color:'red', fontSize:20, textAlign:'center',fontWeight:'500'}}
+                    >Email ou senha incorreto</Text>
+                
+            )}
+            
             {/*Botão*/}
             <View>
                 <View style={{alignItems:'flex-end', width:'95%'}}>

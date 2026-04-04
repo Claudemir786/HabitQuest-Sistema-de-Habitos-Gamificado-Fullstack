@@ -8,7 +8,7 @@ export class Statistic{
     
     async getMonthlyProgress(req,res){
         try {
-            const{id} = req.body;
+            const id = req.user.id;  
 
             const result = await monthlyProgress(id)
             if(!result)return message(res,"Erro, foi possivel retornar os dados estatisticos do mês");
@@ -24,7 +24,7 @@ export class Statistic{
 
     async userStatistics(req,res){
         try {
-            const {id} = req.body;
+            const id = req.user.id;  
             const result = await userStatistics(id);
 
             if(!result)return message(res,"falha na busca dos dados");

@@ -20,21 +20,21 @@ const statistic = new Statistic();
 //rotas de users
 route.post("/create",user.create);
 route.post("/login", user.login);
-route.put("/changeEmail", user.chageEmail);
-route.put("/changePass", user.changePassword);
+route.put("/changeEmail", Auth, user.chageEmail);
+route.put("/changePass", Auth, user.changePassword);
 route.get("/user", Auth, user.getUser);
-route.delete("/userDelete", user.deleteUser);
+route.delete("/userDelete", Auth,user.deleteUser);
 
 //rotas de habit
-route.post("/create/habit", habit.create);
-route.post("/completed/habit", habit.completed);
-route.get("/read/habit", habit.getHabit);
+route.post("/create/habit", Auth,habit.create);
+route.post("/completed/habit", Auth,habit.completed);
+route.get("/read/habit",Auth,habit.getHabit);
 
 
 
 //rotas de statistic
-route.get("/statistic/monthly", statistic.getMonthlyProgress);
-route.get("/statistic/user", statistic.userStatistics);
+route.get("/statistic/monthly",Auth,statistic.getMonthlyProgress);
+route.get("/statistic/user", Auth,statistic.userStatistics);
 
 
 

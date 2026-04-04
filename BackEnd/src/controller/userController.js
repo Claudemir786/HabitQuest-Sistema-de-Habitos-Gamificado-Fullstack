@@ -38,7 +38,7 @@ export class User{
             const result = await loginU(email,password)
             if(!result)return message(res,"login incorreto");
 
-            return res.status(200).json({success:true, id:result});
+            return res.status(200).json({success:true, token:result});
             
         } catch (error) {
             console.log("falha ao fazer login de usuário: ", error);
@@ -104,7 +104,7 @@ export class User{
 
         try {
 
-            const{id} = req.body;
+            const id = req.user.id;  
             if(!id)return message(res,"dados enviado incorretamente");
 
             const result = await deleteU(id);

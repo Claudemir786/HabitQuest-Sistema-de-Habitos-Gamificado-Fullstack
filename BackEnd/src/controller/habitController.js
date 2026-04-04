@@ -32,7 +32,7 @@ export class Habit{
 
     async getHabit(req,res){
         try {
-            const {id} = req.body;
+            const id = req.user.id;  
             if(!id)return message(res,"dados enviados incorretamente");
 
             const result = await readH(id);
