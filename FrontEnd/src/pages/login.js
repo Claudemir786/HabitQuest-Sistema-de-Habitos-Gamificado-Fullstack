@@ -18,7 +18,7 @@ export default function Login({navigation}){
 
         async function handleLogin(){
            try {
-                if(!password ||  password.length < 6 || !email || email.length < 9 || !email.includes("@")){
+                if(!password ||  password.length < 2 || !email || email.length < 8 || !email.includes("@")){
                    setLoginfailure(true);
 
                 }else{

@@ -1,24 +1,20 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, FlatList } from "react-native";
 import DefaultButton from "../components/defaultButton";
-import { getHabit } from "../services/HabitService";
+import { completed, getHabit } from "../services/HabitService";
 
-//simulando dados que vão retornar do banco através de um array
-/*const arrayHabits = [
-    {name:'Beber 2l de água', xp:10},
-    {name:'Meditar 10 minutos', xp:15},
-    {name:'Ler 30 páginas', xp:20},
-    {name:'Exercícios fisícos', xp:25},
-    {name:'Estudar inglês', xp:20},
 
-]*/
 
 export default function Home({navigation}){    
 
     const [habitsUser, setHabitsUser] = useState([]);
+    const [notFindHabits, setNotFindHabits] = useState(false);
+    const [totalHabits, setTotalHabits] = useState(0);
+    const [numHabits,setNumHabits] =useState(0)
+
 
     useEffect(()=>{
-        habits();
+        habits();//já renderiza a tela buscando os dados
     },[])
 
     async function habits() {
@@ -26,9 +22,10 @@ export default function Home({navigation}){
             const result = await getHabit();
 
             if(!result){
-                alert("não foram entrados habitos cadastrados")
+               setNotFindHabits(true);//seta como true para mostrar a mensagem de erro
             }
             setHabitsUser(result);
+            setTotalHabits(habitsUser.length);
         } catch (error) {
             console.error("Falha ao buscar os hábitos cadastrados");
         }
@@ -36,13 +33,29 @@ export default function Home({navigation}){
 
 
     const LIST = ({habit})=>{
-
-    const[buttonClick,serButtonClick] = useState(false)//usado quando clicado no botão
+    
+    const[buttonClick,setButtonClick] = useState(false)//usado quando clicado no botão
 
     //função que marca a opção de hábito e recebe o habito e o xp ganhado
-     function completedHabit(habitNameXp){
-       serButtonClick(true);
-        console.log("o que veio de resposta: ", habitNameXp);
+     async function completedHabit(habitNameXp){
+       setButtonClick(true); 
+       setNumHabits(numHabits+1)
+       
+       try {
+         //aqui vai chamar a função para completar o hábito
+        const result = await completed(habitNameXp.id,habitNameXp.xp_reward);
+
+        if(!result){
+            console.warn("falha ao concluir hábito")
+        }else{
+            console.log("habito concluido com sucesso");
+        }
+       } catch (error) {
+            console.error("não foi possivel comcluir hábito")
+       }
+
+       
+
     }
 
     return(
@@ -52,7 +65,7 @@ export default function Home({navigation}){
                 style={styles.button}
                 onPress={()=> completedHabit(habit)}
             >
-                    <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name}</Text>
+                    <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name_habit}</Text>
                     <Text style={{color:'#a2a4a7', fontSize:20, marginBottom:5}}>+{habit?.xp_reward} Xp</Text>
             </TouchableOpacity>
             )}
@@ -64,7 +77,7 @@ export default function Home({navigation}){
                           
                             
                             <View style={{flexDirection:'column'}}>
-                                <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name}</Text>
+                                <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name_habit}</Text>
                                 <Text style={{color:'#163751', fontSize:20, marginBottom:5}}>+{habit?.xp_reward} Xp</Text>
                             </View>
                             <View style={styles.buttonCompleted}>
@@ -95,10 +108,10 @@ export default function Home({navigation}){
                 </Text>
 
                 {/* se os dados de hábitos a serem concluídos estiverem presentes*/}
-                {status === true &&(
+                {!notFindHabits &&(
                     <Text style={{fontSize:20, color:'#ffffffa4', marginTop:5, textAlign:'center'}}>
 
-                        {completedHabits} de {numHabits}  hábitos concluídos 
+                        {totalHabits} de {numHabits}  hábitos concluídos 
                     </Text>
                 )}
 
@@ -106,17 +119,17 @@ export default function Home({navigation}){
 
             {/*corpo com os botões de hábito */}
             <View style={styles.body}>
-                <Text style={{fontSize:25, fontWeight:'500', color:'#163751'}}>Hábitos de Hoje</Text>
+                <Text style={{fontSize:25, fontWeight:'500', color:'#163751'}}>Hábitos de Hoje</Text>                  
 
                 {/*Se os dados não forem carregados ou o usuário não tiver hábitos cadastrados */}
-                {habits === false &&(
+                {notFindHabits &&(
                     <Text 
                     style={{fontSize:25, 
                             color:'#163751', 
                             fontWeight:'500', 
                             textAlign:'center',
                             marginTop:20}}
-                    >Usuário não possui hábitos ainda 😔</Text>
+                    >Usuário não possui hábitos ainda, falha ao encontrar hábitos 😔</Text>
                 )}
                 
                 <FlatList

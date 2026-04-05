@@ -4,6 +4,7 @@ import Login from "../pages/login";
 import Register from "../pages/register";
 import Drawer from "./Drawer";
 import Add from "../pages/addHabit";
+import Logout from "../components/logout";
 
 const STACK = createNativeStackNavigator();
 
@@ -20,7 +21,7 @@ export default function Stack(){
             <STACK.Screen name="register" component={Register}/>
             <STACK.Screen name="drawer" component={Drawer}/>
             <STACK.Screen name="addHabit" component={Add}/>
-                 
+            <STACK.Screen name="logout" component={Logout}/>    
 
         </STACK.Navigator>
 

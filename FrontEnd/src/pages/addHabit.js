@@ -3,17 +3,20 @@ import Input from "../components/defaultInput";
 import DefaultButton from "../components/defaultButton";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useState } from "react";
+import { create } from "../services/HabitService";
 
 
 export default function Add({navigation}){
 
     const[title,setTitle] = useState("");
+    const[xp,setXp] =useState(0);
     
     function Options({title,xp}){
         return(
              <TouchableOpacity 
              style={styles.button} 
              onPress={()=>handleHabit(title,xp)}
+             
              >
                    <Text style={styles.titleButton}>{title}</Text>
                     <Text style={styles.subTitleButton}>+{xp}XP</Text>
@@ -21,11 +24,28 @@ export default function Add({navigation}){
         )
     }
 
-    function handleHabit(titleButton,xpButton){
+    async function handleHabit(titleButton,xpButton){
+    
+        if(xpButton){
+            setXp(xpButton);
+        }
         console.log(`hábito ${titleButton} e o XP foi ${xpButton}`);
         console.log("o Hábito manual é: ", title);
-        alert("Hábito adicionado com sucesso");
-        navigation.navigate("drawer");
+        try {
+            const result = await create(title,xp);
+            if(!result){
+                alert("falha ao criar novo hábito")
+                
+            }else{
+                alert("Hábito adicionado com sucesso");
+                navigation.navigate("drawer");
+            }
+
+        } catch (error) {
+            console.error("erro na criação: ", error.message);
+
+        }
+       
     }
 
     return(

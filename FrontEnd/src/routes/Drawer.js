@@ -6,6 +6,7 @@ import Progress from '../pages/progress';
 import {Text} from 'react-native'
 import Profile from '../pages/profile';
 import Statistics from '../pages/statistics';
+import Logout from '../components/logout';
 const DRAWER = createDrawerNavigator();
 
 
@@ -19,6 +20,7 @@ export default function Drawer(){
             <DRAWER.Screen name='Perfil' component={Profile}/>
             <DRAWER.Screen name='Status' component={Statistics}/>
             <DRAWER.Screen name='Progresso' component={Progress}/>
+            <DRAWER.Screen name='Sair' component={Logout}/>
            
 
         </DRAWER.Navigator>
