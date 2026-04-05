@@ -2,7 +2,7 @@ import { getToken, saveToken } from "./TokenService";
 
 
 
-const BASEURL = "http://192.168.3.24:3000";
+export const BASEURL = "http://192.168.3.24:3000";
 
 export async function authHeader(){
     const token = await getToken('auth');
@@ -56,5 +56,6 @@ export async function createU(name,email,password){
 }
 
 export async function profileU(){
+
 
 }

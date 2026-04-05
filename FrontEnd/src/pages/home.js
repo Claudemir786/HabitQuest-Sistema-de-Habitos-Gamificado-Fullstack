@@ -1,33 +1,38 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity, FlatList } from "react-native";
 import DefaultButton from "../components/defaultButton";
+import { getHabit } from "../services/HabitService";
 
 //simulando dados que vão retornar do banco através de um array
-const arrayHabits = [
+/*const arrayHabits = [
     {name:'Beber 2l de água', xp:10},
     {name:'Meditar 10 minutos', xp:15},
     {name:'Ler 30 páginas', xp:20},
     {name:'Exercícios fisícos', xp:25},
     {name:'Estudar inglês', xp:20},
 
-]
+]*/
 
-export default function Home({navigation}){
+export default function Home({navigation}){    
 
-    const[status, setStatus] = useState(false);
-    const[numHabits,setNunHabits] = useState(false);
-    const[completedHabits, setCompletedHabits] = useState(false)
-    const[habits,setHabits] = useState(false) //usado caso os dados da api não retornem ou o usuário seja novo e não tenha nada ainda
-   
+    const [habitsUser, setHabitsUser] = useState([]);
 
     useEffect(()=>{
-        setStatus(true) //só pra mostrar as infomações
-        setNunHabits(5); //quantidade de hábitos registrados
-        setCompletedHabits(2) //hábitos concluidos
-        setHabits(true)
-
+        habits();
     },[])
 
+    async function habits() {
+        try {
+            const result = await getHabit();
+
+            if(!result){
+                alert("não foram entrados habitos cadastrados")
+            }
+            setHabitsUser(result);
+        } catch (error) {
+            console.error("Falha ao buscar os hábitos cadastrados");
+        }
+    }
 
 
     const LIST = ({habit})=>{
@@ -48,7 +53,7 @@ export default function Home({navigation}){
                 onPress={()=> completedHabit(habit)}
             >
                     <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name}</Text>
-                    <Text style={{color:'#a2a4a7', fontSize:20, marginBottom:5}}>+{habit?.xp} Xp</Text>
+                    <Text style={{color:'#a2a4a7', fontSize:20, marginBottom:5}}>+{habit?.xp_reward} Xp</Text>
             </TouchableOpacity>
             )}
             {buttonClick &&(
@@ -60,7 +65,7 @@ export default function Home({navigation}){
                             
                             <View style={{flexDirection:'column'}}>
                                 <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name}</Text>
-                                <Text style={{color:'#163751', fontSize:20, marginBottom:5}}>+{habit?.xp} Xp</Text>
+                                <Text style={{color:'#163751', fontSize:20, marginBottom:5}}>+{habit?.xp_reward} Xp</Text>
                             </View>
                             <View style={styles.buttonCompleted}>
                                 <Text style={{fontSize:20,color:'#4A90E2'}}>Concluído!</Text>
@@ -115,8 +120,8 @@ export default function Home({navigation}){
                 )}
                 
                 <FlatList
-                data={arrayHabits}
-                keyExtractor={(item)=> item.name}
+                data={habitsUser}
+                keyExtractor={(item)=> item.id}
                 renderItem={({item})=> <LIST habit={item} />}
                 />
 

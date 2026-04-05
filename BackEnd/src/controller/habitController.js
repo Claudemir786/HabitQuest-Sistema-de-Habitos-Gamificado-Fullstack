@@ -33,7 +33,7 @@ export class Habit{
     async getHabit(req,res){
         try {
             const id = req.user.id;  
-            if(!id)return message(res,"dados enviados incorretamente");
+           //const{id} = req.body
 
             const result = await readH(id);
             if(!result)return message(res,"não foi possivel lêr todos os hábitos");
