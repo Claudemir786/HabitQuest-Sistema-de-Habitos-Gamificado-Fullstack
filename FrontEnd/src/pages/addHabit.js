@@ -11,28 +11,27 @@ export default function Add({navigation}){
     const[title,setTitle] = useState("");
     const[xp,setXp] =useState(0);
     
-    function Options({title,xp}){
+    //componente utilizado para mostra sugestões de habitos
+    function Options({titleE,xpE}){
+        
         return(
              <TouchableOpacity 
              style={styles.button} 
-             onPress={()=>handleHabit(title,xp)}
+             onPress={()=>{                         
+                    handleHabit(titleE,xpE)
+            }}
              
              >
-                   <Text style={styles.titleButton}>{title}</Text>
-                    <Text style={styles.subTitleButton}>+{xp}XP</Text>
+                   <Text style={styles.titleButton}>{titleE}</Text>
+                    <Text style={styles.subTitleButton}>+{xpE}XP</Text>
             </TouchableOpacity>
         )
     }
 
-    async function handleHabit(titleButton,xpButton){
-    
-        if(xpButton){
-            setXp(xpButton);
-        }
-        console.log(`hábito ${titleButton} e o XP foi ${xpButton}`);
-        console.log("o Hábito manual é: ", title);
+    //função que envia os dados identificados(titulo/xp) e retorna a resposta
+    async function CreateHabit(titleC,xpC){
         try {
-            const result = await create(title,xp);
+            const result = await create(titleC,xpC);
             if(!result){
                 alert("falha ao criar novo hábito")
                 
@@ -45,6 +44,22 @@ export default function Add({navigation}){
             console.error("erro na criação: ", error.message);
 
         }
+    }
+
+    //verifica se as descrições do hábito e xp vem do input padrão ou da opções 
+   async function handleHabit(titleoption,xpOption){    
+       
+        let titleParam = "";
+        let xpParam = 0;
+        if(titleoption && xpOption){//se vier dos botões de opção
+            titleParam = titleoption
+            xpParam = xpOption
+            await CreateHabit(titleParam,xpParam)
+
+        }else{//se vier do input
+            await CreateHabit(title,xp)
+        }       
+             
        
     }
 
@@ -80,16 +95,15 @@ export default function Add({navigation}){
                 
                 {/*Botões de sugestões*/}
                
-                <Options title={"Beber 2L de água"} xp={10}/>
-                <Options title={"Meditar 10 minutos"} xp={15}/>
-                <Options title={"Ler 30 páginas"} xp={20}/>
-                <Options title={"Exercícios físicos"} xp={25}/>
-                <Options title={"Estudar inglês"} xp={20}/>
-                <Options title={"Gratidão diária"} xp={10}/>
-                <Options title={"Escrever no diário"} xp={15}/>
-                <Options title={"Meditar 10 minutos"} xp={15}/>
-                <Options title={"Comer frutas"} xp={10}/>
-                <Options title={"Praticar violão"} xp={20}/>
+                <Options titleE={"Beber 2L de água"} xpE={10}/>
+                <Options titleE={"Meditar 10 minutos"} xpE={15}/>
+                <Options titleE={"Ler 30 páginas"} xpE={20}/>
+                <Options titleE={"Exercícios físicos"} xpE={25}/>
+                <Options titleE={"Estudar inglês"} xpE={20}/>
+                <Options titleE={"Gratidão diária"} xpE={10}/>
+                <Options titleE={"Escrever no diário"} xpE={15}/>
+                <Options titleE={"Comer frutas"} xpE={10}/>
+                <Options titleE={"Praticar violão"} xpE={20}/>
             </View>
 
             <View style={{marginTop:50}}></View>

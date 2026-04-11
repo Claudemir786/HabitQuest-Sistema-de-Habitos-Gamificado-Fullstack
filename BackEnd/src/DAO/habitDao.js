@@ -9,6 +9,8 @@ import { readtUser, updateXpLevel } from "./userDao.js";
 const pools = pool;
 
 export async function createH(name,user,xp){
+
+    //console.log("cheguei na DAO");
     try {
 
         const [result] = await pools.query(
@@ -43,6 +45,7 @@ export async function readH(id){
 
 export async function completedH(habit_id,user_id,date,xp_earned){
     try {
+        
 
         const [result] = await pools.query(`INSERT INTO habit_logs(habit_id,user_id,completed_at,xp_earned)
                                             VALUES(?,?,?,?)`, [habit_id,user_id,date,xp_earned]);

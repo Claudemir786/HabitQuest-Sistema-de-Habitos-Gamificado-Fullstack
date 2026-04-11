@@ -10,7 +10,7 @@ export class Habit{
     
     async create(req,res){
         try {
-          
+          console.log("cheguei aqui o body é: ", req.body);
             const{name_habit,xp_reward} = req.body;
             if(!name_habit)return message(res,"dados enviados incorretamente");
             const id = req.user.id;
@@ -18,7 +18,7 @@ export class Habit{
             //hábitos padrão sempre serão 10 de xp
             let xp = xp_reward;
             if(xp === 0) xp = 10;               
-           
+           console.log(name_habit,id,xp)
            const result = await createH(name_habit,id,xp);
 
             if(!result)return message(res,"não foi possivel criar novo hábito");
@@ -50,6 +50,7 @@ export class Habit{
 
     async completed(req,res){
         try {
+            
             const{habit_id,date,xp_earned} = req.body
             if(!habit_id || !date || !xp_earned)return message(res,"dados enviados incorretamente");
             const user_id = req.user.id;

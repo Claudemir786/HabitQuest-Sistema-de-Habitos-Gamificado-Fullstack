@@ -9,6 +9,7 @@ export class User{
 
     async create(req,res){
         try {
+            console.log("cheguei")
             const{name,email,password} = req.body;
             //verifica se os dados foram enviados corretamente 
             if(!name || !email || !password)return message(res,"dados enviados incorretamente");

@@ -3,6 +3,67 @@ import { View, StyleSheet, ScrollView, Text, TouchableOpacity, FlatList } from "
 import DefaultButton from "../components/defaultButton";
 import { completed, getHabit } from "../services/HabitService";
 
+//COMPONENTE QUE MOSTRA A LISTA DE HÁBITOS DO USUÁRIO
+ const LIST = ({habit, setNumHabits})=>{    
+    const[buttonClick,setButtonClick] = useState(false)//usado quando clicado no botão de concluir
+
+
+    //função que marca a opção de hábito e recebe o habito e o xp ganhado
+     async function completedHabit(habitNameXp){       
+       
+       try {
+         //aqui vai chamar a função para completar o hábito
+        const result = await completed(habitNameXp.id,habitNameXp.xp_reward);
+        setNumHabits(prev => prev + 1);//aumenta o valor atual em +1, usando o valor mais recente do state
+
+        if(!result){
+            console.warn("falha ao concluir hábito")
+        }else{
+            console.log("habito concluido com sucesso");
+            setButtonClick(true); 
+        }
+       } catch (error) {
+            console.error("não foi possivel concluir hábito")
+       }      
+
+    }
+
+    return(
+        <View>
+            
+            {!buttonClick  &&(
+                <TouchableOpacity
+                style={styles.button}
+                onPress={()=> completedHabit(habit)}
+            >
+                    <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name_habit}</Text>
+                    <Text style={{color:'#a2a4a7', fontSize:20, marginBottom:5}}>+{habit?.xp_reward} Xp</Text>
+                   
+            </TouchableOpacity>
+            )}
+            {buttonClick &&(
+                <View >
+                 
+                    <TouchableOpacity
+                        style={[styles.button, {backgroundColor:'#E2F1FB', flexDirection:'row', justifyContent:'space-between'}]}>
+                        
+                        
+                        <View style={{flexDirection:'column'}}>
+                            <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name_habit}</Text>
+                            <Text style={{color:'#163751', fontSize:20, marginBottom:5}}>+{habit?.xp_reward} Xp</Text>
+                        </View>
+                        <View style={styles.buttonCompleted}>
+                            <Text style={{fontSize:20,color:'#4A90E2'}}>Concluído!</Text>
+                        </View>
+                        
+
+                    </TouchableOpacity>
+                </View>                
+            )}           
+         
+        </View>
+    )
+    }
 
 
 export default function Home({navigation}){    
@@ -11,7 +72,7 @@ export default function Home({navigation}){
     const [notFindHabits, setNotFindHabits] = useState(false);
     const [totalHabits, setTotalHabits] = useState(0);
     const [numHabits,setNumHabits] =useState(0)
-
+    
 
     useEffect(()=>{
         habits();//já renderiza a tela buscando os dados
@@ -25,82 +86,19 @@ export default function Home({navigation}){
                setNotFindHabits(true);//seta como true para mostrar a mensagem de erro
             }
             setHabitsUser(result);
-            setTotalHabits(habitsUser.length);
+            setTotalHabits(result.length);
         } catch (error) {
             console.error("Falha ao buscar os hábitos cadastrados");
         }
-    }
+    } 
 
-
-    const LIST = ({habit})=>{
-    
-    const[buttonClick,setButtonClick] = useState(false)//usado quando clicado no botão
-
-    //função que marca a opção de hábito e recebe o habito e o xp ganhado
-     async function completedHabit(habitNameXp){
-       setButtonClick(true); 
-       setNumHabits(numHabits+1)
-       
-       try {
-         //aqui vai chamar a função para completar o hábito
-        const result = await completed(habitNameXp.id,habitNameXp.xp_reward);
-
-        if(!result){
-            console.warn("falha ao concluir hábito")
-        }else{
-            console.log("habito concluido com sucesso");
-        }
-       } catch (error) {
-            console.error("não foi possivel comcluir hábito")
-       }
-
-       
-
-    }
-
-    return(
-        <View>
-            {!buttonClick  &&(
-                <TouchableOpacity
-                style={styles.button}
-                onPress={()=> completedHabit(habit)}
-            >
-                    <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name_habit}</Text>
-                    <Text style={{color:'#a2a4a7', fontSize:20, marginBottom:5}}>+{habit?.xp_reward} Xp</Text>
-            </TouchableOpacity>
-            )}
-            {buttonClick &&(
-                <View >
-                 
-                        <TouchableOpacity
-                            style={[styles.button, {backgroundColor:'#E2F1FB', flexDirection:'row', justifyContent:'space-between'}]}>
-                          
-                            
-                            <View style={{flexDirection:'column'}}>
-                                <Text style={{color:'#163751', fontSize:25, fontWeight:'500'}}>{habit?.name_habit}</Text>
-                                <Text style={{color:'#163751', fontSize:20, marginBottom:5}}>+{habit?.xp_reward} Xp</Text>
-                            </View>
-                            <View style={styles.buttonCompleted}>
-                                <Text style={{fontSize:20,color:'#4A90E2'}}>Concluído!</Text>
-                            </View>
-                            
-
-                        </TouchableOpacity>
-                    </View>
-                
-            )}
-            
-         
-        </View>
-    )
-    }
-
+   
    
 
 
     return(
         <ScrollView style={styles.container}>
-            {/*Card */}
+            {/*Card*/} 
             <View style={styles.card}>
 
                 <Text style={{fontSize:30, color:'#fff', fontWeight:'700', textAlign:'center'}}>
@@ -111,7 +109,7 @@ export default function Home({navigation}){
                 {!notFindHabits &&(
                     <Text style={{fontSize:20, color:'#ffffffa4', marginTop:5, textAlign:'center'}}>
 
-                        {totalHabits} de {numHabits}  hábitos concluídos 
+                        {numHabits} de {totalHabits} hábitos concluídos 
                     </Text>
                 )}
 
@@ -119,7 +117,8 @@ export default function Home({navigation}){
 
             {/*corpo com os botões de hábito */}
             <View style={styles.body}>
-                <Text style={{fontSize:25, fontWeight:'500', color:'#163751'}}>Hábitos de Hoje</Text>                  
+                <Text style={{fontSize:25, fontWeight:'500', color:'#163751'}}>Hábitos de Hoje</Text> 
+                               
 
                 {/*Se os dados não forem carregados ou o usuário não tiver hábitos cadastrados */}
                 {notFindHabits &&(
@@ -135,7 +134,7 @@ export default function Home({navigation}){
                 <FlatList
                 data={habitsUser}
                 keyExtractor={(item)=> item.id}
-                renderItem={({item})=> <LIST habit={item} />}
+                renderItem={({item})=> <LIST habit={item} setNumHabits={setNumHabits} />}
                 />
 
             </View>

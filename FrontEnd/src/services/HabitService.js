@@ -23,11 +23,11 @@ export async function getHabit(){
 
 export async function completed(habit_id,xp_earned){
     try {
-        console.log(`o que retornou ${habit_id} e ${xp_earned}`);
+       // console.log(`o que retornou ${habit_id} e ${xp_earned}`);
         const today = new Date();
 
         const date = today.toISOString().split('T')[0];
-        console.log("data formatada: ", date)
+        //console.log("data formatada: ", date)
         const result = await fetch(`${BASEURL}/completed/habit`,{
             method:"POST",
             headers:await authHeader(),
@@ -43,13 +43,13 @@ export async function completed(habit_id,xp_earned){
     }
 }
 
-export async function create(title,xp){
-    try {
-
+export async function create(name_habit,xp){
+    try {        
+        const xp_reward = parseInt(xp)//muda o xp para inteiro antes de enviar para API    
         const result = await fetch(`${BASEURL}/create/habit`,{
             method:'POST',
             headers:await authHeader(),
-            body:JSON.stringify({title,xp})
+            body:JSON.stringify({name_habit,xp_reward})
         })
 
         if(!result.ok)throw new Error("os dados não retornaram corretamente da API");
