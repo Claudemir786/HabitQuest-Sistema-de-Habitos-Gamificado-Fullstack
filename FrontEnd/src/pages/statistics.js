@@ -1,31 +1,62 @@
-import { View,Text, StyleSheet, ScrollView } from "react-native";
+import { View,Text, StyleSheet, ScrollView, FlatList } from "react-native";
 import Foundation from '@expo/vector-icons/Foundation';
 import Octicons from '@expo/vector-icons/Octicons';
 import Feather from '@expo/vector-icons/Feather';
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { StatisticsUser } from "../services/HabitService";
 
 
 export default function Statistics({navigation}){
 
-    const[unlocked,setUnlocked]= useState(false);//usado para as conquistas quando forem desbloqueadas
+    
+    const[totalXp,setTotalXp] = useState(0);
+    const[currentStreak, setCurrentStreak] = useState("");
+    const[habitCount, setHabitCount] = useState("");
+    const[achiCount,setAchiCount] = useState("");
+    const[achievements,setAchievements] = useState([]);
 
-    function Emoji({emoji,title,subTitle}){
+
+    useEffect(()=>{
+        getStatistics()
+    },[])
+
+    async function getStatistics(){
+        try{
+            const result = await StatisticsUser()
+
+            if(result){
+                setAchievements(result.achievements)
+                setTotalXp(result.data.total_xp)
+                setCurrentStreak(result.data.current_streak)
+                setHabitCount(result.data.habits_count)
+                setAchiCount(result.data.achievements_count)
+
+            }else{
+                alert("não foi possivel buscar informações referente a pagina")
+            }
+
+        }catch(error){
+            console.error("error ao buscar dados: ", error.message)
+        }
+    } 
+
+    function ShowAchievement({achievement}){
 
         return(
             <View style={styles.sAchivements}>
 
                 {/*emoji */}
                 <View>
-                    <Text style={styles.emoji}>{emoji}</Text>
+                    <Text style={styles.emoji}>{achievement?.badge_icon}</Text>
                 </View>
 
                 {/*texto */}
                 <View style={styles.textAchievements}>
-                    <Text style={styles.nameAchievement}>{title}</Text>
+                    <Text style={styles.nameAchievement}>{achievement?.title}</Text>
 
-                    <Text style={styles.description}>{subTitle}</Text>
+                    <Text style={styles.description}>{achievement?.description}</Text>
 
-                    {unlocked &&(
+                    {achievement.is_unlocked == 1 &&(
                         <Text style={styles.unlocked}>Desbloqueado</Text>
                     )}                            
                 </View>
@@ -51,7 +82,7 @@ export default function Statistics({navigation}){
 
                     {/*Dados */}
                     <View>
-                        <Text style={styles.title}>156</Text>
+                        <Text style={styles.title}>{habitCount}</Text>
                         <Text style={styles.subTitle}>Hábitos Concluídos</Text>
                     </View>
                 </View>
@@ -64,7 +95,7 @@ export default function Statistics({navigation}){
 
                     {/*Dados */}
                     <View>
-                        <Text style={styles.title}>1850</Text>
+                        <Text style={styles.title}>{totalXp}</Text>
                         <Text style={styles.subTitle}>XP total</Text>
                     </View>
                 </View>
@@ -77,8 +108,8 @@ export default function Statistics({navigation}){
 
                     {/*Dados */}
                     <View>
-                        <Text style={styles.title}>87%</Text>
-                        <Text style={styles.subTitle}>Taxa de sucesso</Text>
+                        <Text style={styles.title}>{currentStreak}</Text>
+                        <Text style={styles.subTitle}>Sequencia Atual</Text>
                     </View>
                 </View>
 
@@ -90,7 +121,7 @@ export default function Statistics({navigation}){
 
                     {/*Dados */}
                     <View>
-                        <Text style={styles.title}>3/6</Text>
+                        <Text style={styles.title}>{achiCount}/6</Text>
                         <Text style={styles.subTitle}>Conquistas</Text>
                     </View>
                 </View>
@@ -98,13 +129,21 @@ export default function Statistics({navigation}){
                 {/*Conquistas */}
                 <View style={styles.card}>
                     <Text style={styles.tAchievements}>Conquistas</Text>
-                    
-                   <Emoji emoji={"🏆"} title={"Primeira Vitória"} subTitle={"Complete seu primeiro hábito"}/>
+                    <FlatList
+                        data={achievements}
+                        keyExtractor={(item)=> item.title}
+                        renderItem={({item})=> <ShowAchievement achievement={item} />}
+                    />
+                    {/*
+                    <Emoji emoji={"🏆"} title={"Primeira Vitória"} subTitle={"Complete seu primeiro hábito"}/>
                    <Emoji emoji={"🔥"} title={"Sequência de 7"} subTitle={"Mantenha 7 dias seguidos"}/>
                    <Emoji emoji={"⭐"} title={"Nivel 10"} subTitle={"Alcance o nivel 10"}/>
                    <Emoji emoji={"💧"} title={"Mestre de Água"} subTitle={"complete 30 dias de hidratação"}/>
                    <Emoji emoji={"🎯"} title={"Sequência de 30"} subTitle={"Mantenha 30 dias seguidos"}/>
                    <Emoji emoji={"👑"} title={"Nivel 25"} subTitle={"Alcance o nivel 25"}/>
+                    
+                    */}
+                   
                     
                 </View>
 

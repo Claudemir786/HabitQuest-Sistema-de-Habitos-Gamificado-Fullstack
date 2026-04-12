@@ -61,3 +61,20 @@ export async function create(name_habit,xp){
         return false;
     }
 }
+
+export async function StatisticsUser(){
+    try {
+
+        const result = await fetch(`${BASEURL}/statistic/user`,{
+            method:'GET',
+            headers: await authHeader()
+        })
+        if(!result.ok)throw new Error("os dados não retornaram da API")
+        const res = await result.json()
+        return res;    
+        
+    } catch (error) {
+        console.error("Falha ao buscar dados statisticos do usuário: ", error.message);
+        return false;
+    }
+}

@@ -1,8 +1,9 @@
 import {View,Text,ScrollView,TouchableOpacity, StyleSheet, TextInput} from 'react-native'
 import Feather from '@expo/vector-icons/Feather';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import DefaultButton from '../components/defaultButton';
+import { changeEmail, changePasswor, changePassword, profileU } from '../services/UserService';
 
 
 
@@ -12,17 +13,117 @@ export default function Profile({navigation}){
     const [email,setEmail] = useState("");
     const[level,setLevel] = useState("");
     const[xp,setXp] = useState("");
+    const[currentStreak, setCurrentStreak] = useState(0);
     const[newPassword,setNewPassword] = useState("");
     const[newEmail,setNewEmail] = useState("");
     const[selectEmail, setSelectEmail] = useState(false);
     const[selectPassword, setSelectPassword] = useState(false);
+    const[errorLoading, setErrorLoading] = useState(false);
+    const[emailError,setEmailError]= useState(false)
+    const[passwordError,setPasswordError]= useState(false)
 
-      function handlenewEmail() {
+
+    useEffect(()=>{
+        getUser() //renderiza a tela trazendo os dados do usuário
+    },[])
+
+    async function getUser(){
+        try {
+            const user = await profileU()
+
+            if(!user){
+                setErrorLoading(true)
+            }else{
+                //seta os valores vindos nas variaveis de estado
+                setName(user.name_user)
+                setEmail(user.email)
+                setLevel(user.level)
+                setXp(user.xp)
+                setCurrentStreak(user.current_streak)
+            }
+            
+        } catch (error) {
+            console.error("Falha ao carregar dados do usuário")
+        }
+        
+    }
+
+    async function handlenewEmail(){
+       if(!newEmail.includes("@") || newEmail.length<9){
        
+            setEmailError(true)
+       }else{
+        
+        try {
+            const result = await changeEmail(email,newEmail)
+               if(result){
+                    alert("email alterado com sucesso")
+                }else{
+                    alert("falha ao criar novo e-mail")
+                }
+            
+        } catch (error) {
+            console.error("falha ao criar novo email: ", error.message)
+        }
+       }
      }
 
-      function handlenewPassword(){
-          
+    async function handlenewPassword(){
+        
+       const haslyrics = /[A-za-z]/.test(newPassword);//pelo menos uma letra
+       const hasNumber = /\d/.test(newPassword);//pelo menos um numero
+       const hasSimbol = /[@$!%*#?&]/.test(newPassword)//caracter especial
+
+        if(haslyrics && hasNumber && hasSimbol && newPassword.length >=6){
+            console.log("entrei")
+            try {
+                const result = await changePassword(email,newPassword)
+
+                if(result){
+                    alert("senha alterada com sucesso")
+                }else{
+                    alert("falha ao criar nova senha")
+                }
+                
+            } catch (error) {
+                console.error("Falha ao alterar a senha: ", error.message)
+            }
+        }else{
+             
+            setPasswordError(true);
+        }
+
+     }
+
+     //componente caso os dados não carregem corretamente
+     function LoadingFailure(){
+        return(
+            <View>
+                <Text style={{color:"#f80707", fontSize:25}}>Dados do perfil não foram carregados corretamente</Text>
+            </View>
+        )
+     }
+      //componente usado quando o email for invalido
+     function ErrorEmail(){
+
+        return(
+         <View>
+                <Text style={{color:"#f70909", fontSize:20 }}>
+                    Email incorreto, insira um email válido
+                </Text>
+            </View>
+        )
+
+     }
+      //componente usado quando a senha for invalida
+     function ErrorPassword(){
+        return(
+            <View>
+                <Text style={{color:"#f70909", fontSize:20 }}>
+                    Falha, senha deve ter no mínimo 6 caracteres conter letras e numeros e caracter especial
+                </Text>
+            </View>
+        )
      }
 
     return(
@@ -31,19 +132,24 @@ export default function Profile({navigation}){
                 <View style={styles.icon}>{/*icone */}
                     <Feather name="user" size={60} color="#fff" />
                 </View>
+              
                 <View>{/*nome e e-mail */}
-                    <Text style={styles.name}>Maria Silva</Text>
-                    <Text style={styles.email}>maria@gmail.com</Text>
+                    <Text style={styles.name}>{name}</Text>
+                    <Text style={styles.email}>{email}</Text>
 
                 </View>
                 <View style={styles.levelXp}>{/*nivel e xp */}
-                    <Text style={styles.level}>Nível 5</Text>
-                    <Text style={styles.level}>Xp 2000</Text>
+                    <Text style={styles.level}>Nível {level}</Text>
+                    <Text style={styles.level}>Xp {xp}</Text>
                 </View>
                 <View style={styles.streak}>{/*sequência */}
-                    <Text style={styles.streakNumber}>2</Text>
+                    <Text style={styles.streakNumber}>{currentStreak}</Text>
                     <Text style={styles.streakTitle}>Sequência Atual em Dias</Text>
                 </View>
+                  {/*Se os dados não forem carregados */}
+                {errorLoading &&(
+                    <LoadingFailure/>
+                )}
             </View>
             <View style={styles.card2}>{/*card 2 */}
                 <Text style={styles.configText}>Configurações da conta</Text>
@@ -56,7 +162,7 @@ export default function Profile({navigation}){
                     </View>
                    <View>
                         <Text style={styles.textButton}>Alterar Email</Text>
-                        <Text style={styles.textButton}>maria@gmail.com</Text>
+                        <Text style={styles.textButton}>{email}</Text>
                     </View>
                 </TouchableOpacity>
                 {selectEmail && (
@@ -67,7 +173,12 @@ export default function Profile({navigation}){
                        style={styles.input}
                     />              
                     <DefaultButton name='Alterar' handle={() =>handlenewEmail()} />
+                    {/*se o email for incorreto*/}
+                    {emailError &&(
+                        <ErrorEmail/>
+                    )}
                     <View style={{marginBottom:15}}></View>
+                  
                     </>            
 
                 )}
@@ -93,7 +204,10 @@ export default function Profile({navigation}){
                        secureTextEntry={true}
                     />
                     <DefaultButton name='Alterar' handle={()=>handlenewPassword()}/>
-                    
+                    {/*se a senha for incorreta */}
+                    {passwordError &&(
+                        <ErrorPassword/>
+                    )}
                     </>
                 )}
                 
@@ -149,7 +263,7 @@ const styles = StyleSheet.create({
     },
     levelXp:{
         flexDirection:'row',
-        justifyContent:'space-around',
+        justifyContent:'space-between',
 
     },
     streak:{

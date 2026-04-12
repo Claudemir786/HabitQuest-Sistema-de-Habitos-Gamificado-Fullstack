@@ -59,7 +59,7 @@ export async function changeEmailU(email,newEmail){
     const [row] =  await pools.query(`SELECT * from users WHERE email = ?`, [email]);
     if(row.length === 0)throw new Error("Falha ao encontrar email");// se a query falhar
     const userId = row[0].id;//guarda o id de usuário
-    //console.log("userId: ", userId);//teste para verificar se o id foi capturado
+    
     if(!userId)throw new Error("o id do usuário não foi encontrado");
 
 

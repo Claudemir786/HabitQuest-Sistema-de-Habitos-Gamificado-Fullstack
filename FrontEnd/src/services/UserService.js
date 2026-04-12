@@ -49,13 +49,62 @@ export async function createU(name,email,password){
         return true;
         
     } catch (error) {
-        console.error("falha ao criar novo usuário: ", error);
+        console.error("falha ao criar novo usuário: ", error.message);
         return false;
     }
 
 }
 
 export async function profileU(){
+    try{
+        const result = await fetch(`${BASEURL}/user`,{
+            method:'GET',
+            headers:await authHeader()
+        })
+        if(!result.ok)throw new Error("Dados não retornaram corretamente da API")
+        const user = await result.json()    
+        return user.user;
 
+    }catch(error){
+        console.error("falha ao buscar dados do usuário: ", error.message);
+        return false;
+    }
 
+}
+
+export async function changeEmail(email,newEmail) {
+    try {
+
+        const result = await fetch(`${BASEURL}/changeEmail`,{
+            method:'PUT',
+            headers: await authHeader(),
+            body:JSON.stringify({email,newEmail})
+        })
+
+        if(!result.ok)throw new Error("Falha na requisição ao alterar email")
+        
+        return true
+        
+    } catch (error) {
+      console.error("Falha ao alterar email na API: ", error.messsage)
+      return false;  
+    }
+}
+
+export async function changePassword(email,newPassword) {
+     try {
+         const result = await fetch(`${BASEURL}/changePass`,{
+            method:'PUT',
+            headers: await authHeader(),
+            body:JSON.stringify({email,newPassword})
+        })
+
+        if(!result.ok)throw new Error("Falha na requisição ao alterar senha ")
+        
+        return true
+        
+    } catch (error) {
+      console.error("Falha ao alterar senha na API: ", error.messsage)
+      return false;  
+    }
 }

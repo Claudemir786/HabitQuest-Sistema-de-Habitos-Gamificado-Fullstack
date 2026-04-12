@@ -6,6 +6,8 @@ import Footer from '../components/footer'
 import { useState } from 'react'
 import { loginU } from '../services/UserService'
 
+//usuário junior@gmail.com
+//senha: Local12@
 
 export default function Login({navigation}){
 
