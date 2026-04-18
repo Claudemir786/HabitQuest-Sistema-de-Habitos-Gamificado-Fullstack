@@ -1,8 +1,10 @@
 import {View,Text,ScrollView,TouchableOpacity, StyleSheet, TextInput} from 'react-native'
 import Feather from '@expo/vector-icons/Feather';
-import { useEffect, useState } from 'react';
+import { useCallback,useEffect, useState } from 'react';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import DefaultButton from '../components/defaultButton';
+import { useFocusEffect } from "@react-navigation/native";
+
 import { changeEmail, changePasswor, changePassword, profileU } from '../services/UserService';
 
 
@@ -22,10 +24,14 @@ export default function Profile({navigation}){
     const[emailError,setEmailError]= useState(false)
     const[passwordError,setPasswordError]= useState(false)
 
-
-    useEffect(()=>{
+     //sempre recarrega os dados da pagina para manter sempre atualizados
+    useFocusEffect(
+        useCallback(()=>{
         getUser() //renderiza a tela trazendo os dados do usuário
-    },[])
+        },[])
+    )
+
+   
 
     async function getUser(){
         try {

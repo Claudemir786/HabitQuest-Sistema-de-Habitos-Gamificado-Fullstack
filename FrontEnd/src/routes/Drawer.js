@@ -19,7 +19,7 @@ export default function Drawer(){
             <DRAWER.Screen name='Add' component={Add} />
             <DRAWER.Screen name='Perfil' component={Profile}/>
             <DRAWER.Screen name='Status' component={Statistics}/>
-            <DRAWER.Screen name='Progresso' component={Progress}/>
+            <DRAWER.Screen name='Progresso Mensal' component={Progress}/>
             <DRAWER.Screen name='Sair' component={Logout}/>
            
 

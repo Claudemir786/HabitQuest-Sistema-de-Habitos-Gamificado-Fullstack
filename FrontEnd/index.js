@@ -2,6 +2,7 @@ import { registerRootComponent } from 'expo';
 
 //import Profile from './src/pages/profile';
 import App from './App';
+//import Progress from './src/pages/progress';
 
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);

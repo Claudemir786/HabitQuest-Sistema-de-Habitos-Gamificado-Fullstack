@@ -2,8 +2,9 @@ import { View,Text, StyleSheet, ScrollView, FlatList } from "react-native";
 import Foundation from '@expo/vector-icons/Foundation';
 import Octicons from '@expo/vector-icons/Octicons';
 import Feather from '@expo/vector-icons/Feather';
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState } from "react";
 import { StatisticsUser } from "../services/HabitService";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 export default function Statistics({navigation}){
@@ -16,10 +17,11 @@ export default function Statistics({navigation}){
     const[achievements,setAchievements] = useState([]);
 
 
-    useEffect(()=>{
+    useFocusEffect(
+        useCallback(()=>{
         getStatistics()
-    },[])
-
+        },[])
+    )
     async function getStatistics(){
         try{
             const result = await StatisticsUser()
@@ -134,15 +136,7 @@ export default function Statistics({navigation}){
                         keyExtractor={(item)=> item.title}
                         renderItem={({item})=> <ShowAchievement achievement={item} />}
                     />
-                    {/*
-                    <Emoji emoji={"🏆"} title={"Primeira Vitória"} subTitle={"Complete seu primeiro hábito"}/>
-                   <Emoji emoji={"🔥"} title={"Sequência de 7"} subTitle={"Mantenha 7 dias seguidos"}/>
-                   <Emoji emoji={"⭐"} title={"Nivel 10"} subTitle={"Alcance o nivel 10"}/>
-                   <Emoji emoji={"💧"} title={"Mestre de Água"} subTitle={"complete 30 dias de hidratação"}/>
-                   <Emoji emoji={"🎯"} title={"Sequência de 30"} subTitle={"Mantenha 30 dias seguidos"}/>
-                   <Emoji emoji={"👑"} title={"Nivel 25"} subTitle={"Alcance o nivel 25"}/>
-                    
-                    */}
+                   
                    
                     
                 </View>

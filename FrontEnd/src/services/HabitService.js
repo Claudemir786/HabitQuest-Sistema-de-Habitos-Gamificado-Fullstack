@@ -74,7 +74,25 @@ export async function StatisticsUser(){
         return res;    
         
     } catch (error) {
-        console.error("Falha ao buscar dados statisticos do usuário: ", error.message);
+        console.error("Falha ao buscar dados estatisticas do usuário: ", error.message);
         return false;
+    }
+}
+
+//estatistica dos ultimos 30 dias
+export async function getStatisticMonthly(params){
+    try {
+        const result = await fetch(`${BASEURL}/statistic/monthly`,{
+            method:'GET',
+            headers: await authHeader()            
+        })
+        
+        if(!result.ok)throw new Error("Dados não retonaram corretamente da API")
+
+        const res = await result.json()
+        return res.result    
+    } catch (error) {
+        console.error("Erro, dados não retornaram corretamente: ", error.message)
+        return false
     }
 }
