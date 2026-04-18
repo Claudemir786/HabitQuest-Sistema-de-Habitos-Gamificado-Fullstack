@@ -76,12 +76,12 @@ export default function Profile({navigation}){
 
     async function handlenewPassword(){
         
-       const haslyrics = /[A-za-z]/.test(newPassword);//pelo menos uma letra
+       const haslyrics = /[A-Za-z]/.test(newPassword);//pelo menos uma letra
        const hasNumber = /\d/.test(newPassword);//pelo menos um numero
        const hasSimbol = /[@$!%*#?&]/.test(newPassword)//caracter especial
 
         if(haslyrics && hasNumber && hasSimbol && newPassword.length >=6){
-            console.log("entrei")
+            
             try {
                 const result = await changePassword(email,newPassword)
 

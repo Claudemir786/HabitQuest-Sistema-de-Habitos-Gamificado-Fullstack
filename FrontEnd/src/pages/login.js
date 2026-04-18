@@ -18,28 +18,34 @@ export default function Login({navigation}){
 
     
 
-        async function handleLogin(){
-           try {
-                if(!password ||  password.length < 2 || !email || email.length < 8 || !email.includes("@")){
-                   setLoginfailure(true);
+    async function handleLogin(){
+        try {
+            const haslyrics = /[A-Za-z]/.test(password);//pelo menos uma letra
+            const hasNumber = /\d/.test(password);//pelo menos um numero
+            const hasSimbol = /[@$!%*#?&]/.test(password)//caracter especial
 
-                }else{
-                   
-                    const result = await loginU(email,password);
-                    if(result){                        
-                        navigation.navigate("drawer")
-                    }
+            if(!haslyrics || !hasNumber || !hasSimbol || password.length <6 ||
+                !email || email.length < 8 || !email.includes("@")){
                     setLoginfailure(true);
+            }else{
+                
+                const result = await loginU(email,password);
+                if(result){                        
+                    navigation.navigate("drawer")
                 }
-
-            
-           } catch (error) {            
-            console.error("falha ao fazer o login", error.message);
-           }     
-           
-           
-           
-        }
+                setLoginfailure(true);
+            }
+       
+        
+          
+        
+        } catch (error) {            
+        console.error("falha ao fazer o login", error.message);
+        }     
+        
+        
+        
+    }
 
     return(
         <ScrollView style={styles.container}>

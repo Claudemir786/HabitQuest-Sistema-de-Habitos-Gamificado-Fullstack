@@ -10,7 +10,7 @@ export class Habit{
     
     async create(req,res){
         try {
-          console.log("cheguei aqui o body é: ", req.body);
+          //console.log("cheguei aqui o body é: ", req.body);
             const{name_habit,xp_reward} = req.body;
             if(!name_habit)return message(res,"dados enviados incorretamente");
             const id = req.user.id;

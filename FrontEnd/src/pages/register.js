@@ -18,12 +18,15 @@ export default function Register({navigation}){
 
     async function handleCreate(){
         try {
-           
+            const haslyrics = /[A-Za-z]/.test(password);//pelo menos uma letra
+            const hasNumber = /\d/.test(password);//pelo menos um numero
+            const hasSimbol = /[@$!%*#?&]/.test(password)//caracter especial
+        
             if(!name || !email || !password || !passwordConfirm){                
                 setFailureLogin(true);
 
-            }else if(name <2 || !email.includes("@") || email < 9 
-            || password < 6 || password !== passwordConfirm){
+            }else if(name <5 || !haslyrics || !hasNumber || !hasSimbol || password.length <6 ||
+                 email.length < 8 || !email.includes("@") || password !== passwordConfirm){
                 
                 setFailureLogin(true);
             }else{
