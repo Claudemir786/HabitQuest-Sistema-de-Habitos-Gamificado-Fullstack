@@ -168,7 +168,7 @@ export default function Profile({navigation}){
                     </View>
                    <View>
                         <Text style={styles.textButton}>Alterar Email</Text>
-                        <Text style={styles.textButton}>{email}</Text>
+                        <Text style={styles.textButton}></Text>
                     </View>
                 </TouchableOpacity>
                 {selectEmail && (
@@ -324,7 +324,8 @@ const styles = StyleSheet.create({
         color:'#163751', 
         fontWeight:'600',
         fontSize:18,
-        marginTop:5
+        marginTop:5,
+        
     },
     input:{
         borderWidth:1,
